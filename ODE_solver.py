@@ -9,7 +9,8 @@ that will be implemented by Euler, Heuns, RK-2, and RK-4
 """
 
 import numpy as np
-from np import pi
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 class ODE_solver():
@@ -18,25 +19,25 @@ class ODE_solver():
     to two coupled equations: u and v.
     
     """
-    def __init__(self, dudt = -1, dvdt = -1, u0 = 0, v0 = 0, a = 0, b = 10 * pi,  n = 10):
+    def __init__(self, dudt = -1, dvdt = -1, u0 = 0, v0 = 0, a = 0, b = 10 * np.pi,  n = 10):
         self.u0 = u0
         self.v0 = v0
         self.a = a
         self.b = b
         self.n = n
         if dudt == -1:
-            self.dudt = default_dudt
+            self.dudt = self.default_dudt
         else:
             self.dudt = dudt
         if dvdt == -1:
-            self.dvdt = default_dvdt
+            self.dvdt = self.default_dvdt
         else:
-            self.dvdt = dudt
+            self.dvdt = dvdt
 
-    def default_dudt(u, v, t):
+    def default_dudt(self, u, v, t):
         return v
     
-    def default_dvdt(u, v, t):
+    def default_dvdt(self, u, v, t):
         return -1 * u
     
 
@@ -52,7 +53,7 @@ class ODE_solver():
         solutions as well as the exact solutions.
         """
         
-        approx_values = solve_n()
+        approx_values = self.solve_n()
         u_list_approx = approx_values[0]
         v_list_approx = approx_values[1]
         
@@ -65,9 +66,10 @@ class ODE_solver():
         fig, ax = plt.subplots(nrows = 1, ncols = 1)
         ax.plot(u_list_approx, v_list_approx, 'r')
         ax.plot(u_list_exact, v_list_exact, 'g--')
-        ax.xlabel("u(t)")
-        ax.ylabel("v(t)")
-        ax.title("Approx ODE solution with Exact solution for n = " + str(self.n))
+        ax.set_xlabel("u(t)")
+        ax.set_ylabel("v(t)")
+        ax.set_title("Approx ODE solution with Exact solution for n = " + str(self.n))
         ax.grid(True)
-        fig.savefig('coupledODE_%3d.png' % (self.n))
+        fig.savefig('coupled' + self.__class__.__name__ + '_%3d.png' % (self.n))
         plt.close(fig)
+
